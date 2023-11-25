@@ -1,20 +1,13 @@
-import { Text, View, ViewProps, StyleSheet } from 'react-native'
+import { ComponentProps } from 'react'
+import * as S from './styles'
+import { Text } from 'react-native'
 
-type GroupsProps = ViewProps
+type GroupsProps = ComponentProps<typeof S.Container>
 
 export function Groups({ ...rest }: GroupsProps) {
   return (
-    <View style={styles.container} {...rest}>
+    <S.Container {...rest}>
       <Text>Hello Groups</Text>
-    </View>
+    </S.Container>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
