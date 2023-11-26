@@ -1,12 +1,12 @@
 import { ComponentProps } from 'react'
-import { Container, Subtitle, Title } from './styles'
+import { Container, Title, Subtitle } from './styles'
 
-type HighLightProps = ComponentProps<typeof Container> & {
+type HighlightProps = ComponentProps<typeof Container> & {
   title: string
   subtitle: string
 }
 
-export function HighLight({ title, subtitle, ...rest }: HighLightProps) {
+export function Highlight({ title, subtitle, ...rest }: HighlightProps) {
   return (
     <Container {...rest}>
       <Title>{title}</Title>

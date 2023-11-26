@@ -1,17 +1,33 @@
-import { Header } from '@components/Header'
-import { ComponentProps } from 'react'
-import * as S from './styles'
-import { HighLight } from '@components/Highlight'
+import { Button } from '@components/Button'
 import { GroupCard } from '@components/GroupCard'
+import { Header } from '@components/Header'
+import { Highlight } from '@components/Highlight'
+import { ListEmpty } from '@components/ListEmpty'
+import { ComponentProps, useState } from 'react'
+import { FlatList } from 'react-native'
+import * as S from './styles'
 
 type GroupsProps = ComponentProps<typeof S.Container>
 
 export function Groups({ ...rest }: GroupsProps) {
+  const [groups, setGroups] = useState<string[]>([])
   return (
     <S.Container {...rest}>
       <Header />
-      <HighLight title="Turma" subtitle="Jogue com a sua turma" />
-      <GroupCard title="Turma 1" />
+      <Highlight title="Turma" subtitle="Jogue com a sua turma" />
+
+      <FlatList
+        data={groups}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => <GroupCard title={item} />}
+        contentContainerStyle={groups.length === 0 && { flex: 1 }}
+        ListEmptyComponent={() => (
+          <ListEmpty message="Você ainda não possui turmas..." />
+        )}
+        showsVerticalScrollIndicator={false}
+      />
+
+      <Button title="Criar nova turma" />
     </S.Container>
   )
 }

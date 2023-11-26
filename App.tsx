@@ -6,6 +6,9 @@ import {
   useFonts,
 } from '@expo-google-fonts/roboto'
 import { Groups } from '@screens/Groups'
+import { NewGroup } from '@screens/NewGroups'
+import { Players } from '@screens/Players'
+
 import theme from '@theme/index'
 import { SafeAreaView, StatusBar } from 'react-native'
 import { ThemeProvider } from 'styled-components/native'
@@ -26,7 +29,7 @@ export default function App() {
           backgroundColor="transparent"
           translucent
         />
-        {fontsLoaded ? <Groups /> : <Loading />}
+        {fontsLoaded ? <Players /> : <Loading />}
       </SafeAreaView>
     </ThemeProvider>
   )
