@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { GROUP_COLLECTION } from '@storage/storageKeys'
+import { GROUP_COLLECTION } from '@storage/storage-keys'
 
-export async function groupsGetAll() {
+export async function groupsGetAll(): Promise<string[]> {
   try {
     const storage = await AsyncStorage.getItem(GROUP_COLLECTION)
     const groups = storage ? JSON.parse(storage) : []
