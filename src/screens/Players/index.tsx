@@ -10,11 +10,13 @@ import { Alert, FlatList, TextInput } from 'react-native'
 import { PlayerCard } from '@components/PlayerCard'
 import { ListEmpty } from '@components/ListEmpty'
 import { Button } from '@components/Button'
-import { useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { AppError } from '@utils/exceptions'
 import { playerAddByGroup } from '@storage/player/add-by-group'
 import { playerGetByGroupAndTeam } from '@storage/player/get-by-group-and-team'
 import { IPlayerStorageDTO } from '@storage/player/storage-DTO'
+import { playerRemoveByGroup } from '@storage/player/remove-by-group'
+import { groupRemoveByName } from '@storage/group/remove-by-name'
 
 type RouteParams = {
   group?: string
@@ -26,6 +28,8 @@ export function Players({ ...rest }: PlayersProps) {
   const [newPlayerName, setNewPlayerName] = useState('')
   const [team, setTeam] = useState('Time A')
   const [players, setPlayers] = useState<IPlayerStorageDTO[]>([])
+
+  const navigation = useNavigation()
 
   const { params } = useRoute()
   const group = (params as RouteParams)?.group ?? ''
@@ -80,6 +84,39 @@ export function Players({ ...rest }: PlayersProps) {
     [group],
   )
 
+  const handleRemovePlayer = async (playerName: string) => {
+    try {
+      await playerRemoveByGroup(playerName, group)
+      fetchPlayersByTeam(team)
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert('Deletar Jogador', error.message)
+      } else {
+        return Alert.alert(
+          'Deletar Jogador',
+          'Não foi possível deletar o jogador, tente novamente mais tarde.',
+        )
+      }
+    }
+  }
+
+  async function groupRemove() {
+    try {
+      await groupRemoveByName(group)
+      navigation.navigate('groups')
+    } catch (error) {
+      console.log(error)
+      Alert.alert('Remover Grupo', 'Não foi possível remover o grupo')
+    }
+  }
+
+  async function handleGroupRemove() {
+    Alert.alert('Remover', 'Deseja remover o grupo?', [
+      { text: 'Não', style: 'cancel' },
+      { text: 'Sim', onPress: () => groupRemove() },
+    ])
+  }
+
   useEffect(() => {
     fetchPlayersByTeam(team)
   }, [fetchPlayersByTeam, team])
@@ -97,6 +134,8 @@ export function Players({ ...rest }: PlayersProps) {
           autoCorrect={false}
           onChangeText={setNewPlayerName}
           value={newPlayerName}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType="done"
         />
 
         <ButtonIcon icon="add" onPress={handleAddPlayer} />
@@ -123,7 +162,10 @@ export function Players({ ...rest }: PlayersProps) {
         data={players}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <PlayerCard name={item.name} onRemove={() => null} />
+          <PlayerCard
+            name={item.name}
+            onRemove={() => handleRemovePlayer(item.name)}
+          />
         )}
         ListEmptyComponent={() => (
           <ListEmpty message="Não há pessoas nesse time" />
@@ -135,7 +177,11 @@ export function Players({ ...rest }: PlayersProps) {
         ]}
       />
 
-      <Button title="Remover Turma" type="SECONDARY" />
+      <Button
+        title="Remover Turma"
+        type="SECONDARY"
+        onPress={handleGroupRemove}
+      />
     </Container>
   )
 }
